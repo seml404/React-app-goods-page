@@ -53,13 +53,16 @@ function ItemsLoaded(props) {
   }, [goodsList]);
 
   function renderGoodsList(listOfGoods) {
-    console.log("start renderring");
     return listOfGoods.map((category) => {
       return (
-        <GoodsCategory categoryName={category.rname}>
+        <GoodsCategory
+          categoryName={category.rname}
+          key={category.rname + Math.random()}
+        >
           {category.goods.map((goodsItem) => {
             return (
               <GoodsItem
+                key={goodsItem.gid + Math.random()}
                 itemId={goodsItem.gid}
                 itemName={goodsItem.gname}
                 itemPrice={goodsItem.gprice}

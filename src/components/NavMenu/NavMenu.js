@@ -34,7 +34,7 @@ function NavMenu(props) {
                   return (
                     <div
                       className="nav-menu-item"
-                      key={item.categoryId + "nav-menu-item"}
+                      key={item.categoryId + Math.random()}
                       onClick={() => handleMenuItemClick(item.categoryId)}
                     >
                       {item.name}

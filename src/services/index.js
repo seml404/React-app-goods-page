@@ -37,6 +37,5 @@ export function countTotalCost(obj) {
   for (let item in obj) {
     total += +obj[item].totalCost;
   }
-  console.log(total);
   return total;
 }
