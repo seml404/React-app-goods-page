@@ -2,16 +2,21 @@ import React from "react";
 import Header from "../Header/Header";
 import { Routes, Route } from "react-router-dom";
 import ItemsLoaded from "../ItemsLoaded/ItemsLoaded";
+import NavMenu from "../NavMenu/NavMenu";
+import ItemsGroup from "../ItemsGroup/ItemsGroup";
 
 const App = () => {
   return (
-    <div className="wrapper">
-      <Header />
-      <ItemsLoaded></ItemsLoaded>
-      <Routes>
-        {/* <Route path="/" element={<BooksFound />}></Route>        */}
-      </Routes>
-    </div>
+    <>
+      <NavMenu></NavMenu>
+      <div className="wrapper">
+        <Header />
+        <Routes>
+          <Route path="/" exact element={<ItemsLoaded />}></Route>
+          <Route path="/category/:itemsId" element={<ItemsGroup />}></Route>
+        </Routes>
+      </div>
+    </>
   );
 };
 

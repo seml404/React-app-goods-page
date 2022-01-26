@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { requestData } from "../../services";
 import { connect } from "react-redux";
 import { setGoodsList } from "../../store/actions";
+import { useNavigate } from "react-router-dom";
 
 function Header(props) {
-  const { goodsList, setGoodsList } = props;
+  const navigate = useNavigate();
+  const { setGoodsList, listLoaded } = props;
   function handleRequest() {
     requestData(setGoodsList);
   }
@@ -14,23 +15,27 @@ function Header(props) {
     <>
       <div className="header">
         <div className="header-wrapper">
-          <button className="btn-main" onClick={handleRequest}>
-            Get goods list
-          </button>
-          <button onClick={() => console.log(goodsList)}>
-            SHOW goods list
-          </button>
+          {listLoaded ? (
+            <button className="btn btn-main" onClick={() => navigate("/")}>
+              На главную
+            </button>
+          ) : (
+            <button className="btn btn-main" onClick={handleRequest}>
+              Получить перечень товаров
+            </button>
+          )}
         </div>
       </div>
     </>
   );
 }
+
 const mapStateToProps = (state) => {
   return {
     goodsList: state.goodsList,
+    listLoaded: state.listLoaded,
   };
 };
-
 const mapDispatchToProps = {
   setGoodsList,
 };

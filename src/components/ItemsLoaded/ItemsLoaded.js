@@ -1,62 +1,90 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import GoodsCategory from "../GoodsCategory/GoodsCategory";
+import GoodsItem from "../GoodsItem/GoodsItem";
+import TotalSum from "../TotalSum/TotalSum";
+import { countTotalCost } from "../../services";
 
 function ItemsLoaded(props) {
   const { goodsList } = props;
+  let [readyToRender, setReadyToRender] = useState(false);
   let [orderDetails, setOrderDetails] = useState({});
+  let [totalCost, setTotalCost] = useState(0);
 
   function handleInputChange(e, itemId) {
+    setTotalCost(0);
     setOrderDetails((prev) => {
       return {
         ...prev,
-        [itemId]: e.target.value,
+        [itemId]: {
+          ...prev[itemId],
+          itemsOrdered: e.target.value,
+          totalCost: e.target.value * prev[itemId].itemPrice,
+        },
       };
     });
   }
 
+  useEffect(() => {
+    setTotalCost(() => {
+      return countTotalCost(orderDetails);
+    });
+  }, [orderDetails]);
+
+  useEffect(() => {
+    setReadyToRender(false);
+    if (goodsList.length > 0) {
+      goodsList.forEach((category) => {
+        category.goods.forEach((item) => {
+          setOrderDetails((prev) => {
+            return {
+              ...prev,
+              [item.gid]: {
+                itemPrice: item.gprice,
+                itemsOrdered: "",
+                totalCost: "",
+              },
+            };
+          });
+        });
+      });
+      setReadyToRender(true);
+    }
+  }, [goodsList]);
+
   function renderGoodsList(listOfGoods) {
+    console.log("start renderring");
     return listOfGoods.map((category) => {
       return (
-        <>
-          <div className="category-container">
-            <h2 className="category-title">{category.rname}</h2>
-
-            <div className="category-items">
-              {category.goods.map((goodsItem) => {
-                return (
-                  <>
-                    <div className="item-wrapper">
-                      <div className="item-id">{goodsItem.gid}</div>
-                      <div className="item-id">{goodsItem.gname}</div>
-                      <div className="item-price">{goodsItem.gprice}</div>
-                      <div>
-                        <input
-                          className="item-ordered"
-                          value={orderDetails[goodsItem.gid]}
-                          onChange={(e) => handleInputChange(e, goodsItem.gid)}
-                        ></input>
-                      </div>
-                      <div className="item-ordered-price">
-                        {orderDetails[goodsItem.gid]
-                          ? orderDetails[goodsItem.gid] * goodsItem.gprice
-                          : ""}
-                      </div>
-                    </div>
-                  </>
-                );
-              })}
-            </div>
-          </div>
-        </>
+        <GoodsCategory categoryName={category.rname}>
+          {category.goods.map((goodsItem) => {
+            return (
+              <GoodsItem
+                itemId={goodsItem.gid}
+                itemName={goodsItem.gname}
+                itemPrice={goodsItem.gprice}
+                itemValue={orderDetails[goodsItem.gid].itemsOrdered}
+                handleValueChange={handleInputChange}
+                totalCost={orderDetails[goodsItem.gid].totalCost}
+              ></GoodsItem>
+            );
+          })}
+        </GoodsCategory>
       );
     });
   }
 
   return (
     <>
-      {goodsList ? (
-        <>{renderGoodsList(goodsList)}</>
+      {readyToRender ? (
+        <>
+          {renderGoodsList(goodsList)}
+          <TotalSum
+            goodsCounted={goodsList}
+            totalCost={totalCost}
+            orderDetails={orderDetails}
+          ></TotalSum>
+        </>
       ) : (
         <>
           <div>no data</div>
@@ -71,7 +99,6 @@ const mapStateToProps = (state) => {
     goodsList: state.goodsList,
   };
 };
-
 const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ItemsLoaded);

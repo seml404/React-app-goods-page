@@ -5,11 +5,10 @@ const setGoodsList = (goodsList) => {
   };
 };
 
-const testFunc = (info) => {
+const toggleMenu = () => {
   return {
-    type: "TEST",
-    info,
+    type: "TOGGLE_MENU",
   };
 };
 
-export { setGoodsList, testFunc };
+export { setGoodsList, toggleMenu };
