@@ -18,7 +18,7 @@ export default function TotalSum(props) {
         >
           В корзину
         </button>
-        <p className="total-price">{totalCost}</p>
+        <p className="total-price">Итого: {totalCost}</p>
       </div>
     </>
   );
